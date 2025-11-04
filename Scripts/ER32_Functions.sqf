@@ -3,6 +3,11 @@ Contains all the functions that are used.
 */
 
 ER32_fnc_checkForRessources = {
+
+	/*
+	Creates an ace interaction point to check for ressources inside the crate.
+	*/
+	
 	params ["_ressource","_crate"];
 	
 	_ER32_ressources = [
@@ -28,6 +33,12 @@ ER32_fnc_checkForRessources = {
 };
 
 ER32_fnc_loadOnFlatbed = {
+
+	/*
+	Creates an ace interaction point to put the crates onto the flatbed. 
+	More info the the "ER32_Flatbed.sqf".
+	*/
+	
 	params ["_crate"];
 	
 	_ER32_loadOnFlatbed = [
