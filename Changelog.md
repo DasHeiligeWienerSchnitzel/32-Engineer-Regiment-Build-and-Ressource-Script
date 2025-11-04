@@ -1,6 +1,31 @@
 #### Changelog
 
+---
 
+##### Version 1.2 - 04.11.2025
+
+###### Added
+
+* Hint after placement got canceled.
+* Hint if space behind truck is blocked.
+* Unloading now checks if there is already a crate placed down.
+
+###### Fixed
+
+* The cost of placing objects would not be correctly checked.
+* Pressing right mouse button would not correctly end placement.
+* Arguments were missing, breaking the whole "crateSpawner.sqf" script. Fixed it by adding the arguments back.
+* Used "if () do {}" ... that of course does not work. Changed to "if () then {}" which will work. :)
+
+###### Changed
+
+*
+
+###### Removed
+
+* 
+
+---
 
 ##### Version 1.1 - 01.11.2025
 
@@ -22,11 +47,9 @@
 
 * 
 
-
+---
 
 ##### Version 1.0 - 30.10.2025
-
-
 
 ###### Added
 
@@ -51,3 +74,4 @@
 ###### Removed
 
 * 
+
