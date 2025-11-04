@@ -37,7 +37,7 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 					[_crate, -1] call ace_cargo_fnc_setSize;
 					[_crate, -1] call ace_cargo_fnc_setSpace;
 					[_ressource,_crate] call ER32_fnc_checkForRessources;
-					[_crate] call ER32_fnc_loadOnFlatbed;
+					[_crate,_crates] call ER32_fnc_loadOnFlatbed;
 				}else{
 					hint "Space occupied!";
 				};
