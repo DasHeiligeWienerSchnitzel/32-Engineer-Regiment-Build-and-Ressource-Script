@@ -1,5 +1,4 @@
 
-
 /*
 List of objects that will be added to the Build Ace Self Interaction.
 1. 	STRING containing the classname of the object to be added.
@@ -19,4 +18,5 @@ ER32_Classname_List = [
 	["WaterPump_01_forest_F",		[0,0,0,100],"Water Pump",		"Humanitarian",		30],	
 	["Land_ConcreteWell_02_F",		[50,0,0,20],"Well Pump",		"Humanitarian",		20],
 	["Land_ConcreteHedgehog_01_F",	[50,0,0,25],"Concrete Hedgehog","Barricade",		15]
+
 ];
