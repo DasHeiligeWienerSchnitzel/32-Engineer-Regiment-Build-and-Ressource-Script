@@ -24,16 +24,23 @@ _numberOfCratesNearby = count _cratesNearby; //counts the objects in the array.
 /*
 If atleast one crate exists, collects all the ressources and combines them in one array.
 */
+
 _ressources = [0,0,0,0];
 _enoughRessources = true;
 if (_numberOfCratesNearby > 0) then {
+	
+	//Collects the ressources of all crates nearby.
+	
 	{
 		_ressourcesToAdd = _x getVariable ["ER32_Fortify_Ressources", [0,0,0,0]];
 		for "_i" from 0 to ((count _ressources) - 1) do {
 			_ressources set [_i, (_ressources select _i) + (_ressourcesToAdd select _i)];
 		};
+		
 	}forEach _cratesNearby;
-	//Now checks if enough ressources are to cover the cost.
+	
+	//Now checks if the ressources are enough to cover the cost of the building.
+	
 	for "_i" from 0 to ((count _ressources) - 1) do {
 		if ((_ressources select _i) < (_cost select _i)) then {
 			_enoughRessources = false
@@ -41,11 +48,18 @@ if (_numberOfCratesNearby > 0) then {
 	};
 };
 
+//If not enough ressources are found the below block will trigger.
+
 if (_enoughRessources == false) exitWith {
+	
+	//If no ressource crates are nearby then there are no ressources nearby.
+	
 	if (_numberOfCratesNearby == 0) then {
 		_ressources = [0,0,0,0];
-		hint "test";
 	};
+	
+	//Tells the player how many ressources are nearby and how many are needed for the building cost.
+	
 	hint format [
 		"Not enough ressources!\nRessources needed:\nConcrete: (%1/%2)\nWood: (%3/%4)\nSand: (%5/%6)\nMetall: (%7/%8)",
 		_ressources select 0,_cost select 0,
@@ -55,9 +69,17 @@ if (_enoughRessources == false) exitWith {
 	];
 };
 
-_pos = [position _caller, 2.25, getDir _caller] call BIS_fnc_relPos; //Gets the relative position of the soon to be created object to the player.
-_object = createVehicle [_class, _pos, [], 0, "CAN_COLLIDE"]; //Creates the object at the relativ position from the player.
-_object setDir getDir _caller; //Sets the direction of the object to the same direction the player is facing.
+//Gets the relative position of the soon to be created object to the player.
+
+_pos = [position _caller, 2.25, getDir _caller] call BIS_fnc_relPos; 
+
+//Creates the object at the relativ position from the player.
+
+_object = createVehicle [_class, _pos, [], 0, "CAN_COLLIDE"]; 
+
+//Sets the direction of the object to the same direction the player is facing.
+
+_object setDir getDir _caller; 
 
 _posAdd = 0.0; 
 _dirAdd = 0;
@@ -70,23 +92,52 @@ And check if any of the 4 combination, explained above, are fullfilled.
 */
 
 while {(_placed == false) and (_canceled == false)} do {
+	
+	//Get a relative position infront of the caller.
+	
 	_pos = [position _caller, 2.25, getDir _caller] call BIS_fnc_relPos;
+	
+	/*
+	Depending on the key input the preview object height or rotation will be changed.
+	- prevAction shows if the mousewheel has been scrolled up.
+	- nextAction shows if the mousewheel has been scrolled down.
+	- curatorGroupMod shows if the Left Ctrl Button has been pressed.
+	*/
+	
+	//Increases the height if scroll wheel goes up.
 	if ((inputAction "prevAction" > 0) and (inputAction "curatorGroupMod" == 0)) then {
 		_posAdd = _posAdd + 0.05;
 	};
+	
+	//Decreases the height if scroll wheel goes down.
 	if ((inputAction "nextAction" > 0) and (inputAction "curatorGroupMod" == 0)) then {
 		_posAdd = _posAdd -0.05;
 	};
+	
+	//Rotates clockwise if mousewheel scrolled up and Left Ctrl has been pressed.
 	if ((inputAction "curatorGroupMod" > 0) and (inputAction "prevAction" > 0)) then {
 		_dirAdd = _dirAdd + 1;
 	};
+	
+	//Rotates counterclockwise if mousewheel scrolled down and Left Ctrl has been pressed.
 	if ((inputAction "curatorGroupMod" > 0) and (inputAction "nextAction" > 0)) then {
 		_dirAdd = _dirAdd - 1;
 	};
+	
+	//Changes the position of the object accordingly.
+	
 	_pos set [2,(_pos select 2) + _posAdd];
 	_object setPos _pos;
 	_object setDir ((getDir _caller) + _dirAdd);
+	
 	sleep 0.001;
+	
+	/*
+	Checks if the left/right mouse button has been pressed.
+	On left mouse button press the object will be placed.
+	On right mouse button press the placement will be canceled.
+	*/
+	
 	if (inputMouse 0 == 1) then {
 		_placed = true;
 		_object hideObjectGlobal true;
@@ -97,74 +148,118 @@ while {(_placed == false) and (_canceled == false)} do {
 		};
 	};
 };
+
 /*
 After 'placing' the object. It will first vanish/hide and a progress bar will be shown.
 Showing the duration till the object will be sucessfully build. 
 */
+
 _caller playMove "Acts_carFixingWheel";
 if (_placed == true) then {
-	[																				//Progress bar
-		_time, 																		//Time
-		[_object,_caller,_name,_time,_ressources,_cost,_sortedCrates], 				//Arguments
-		{																			//On completion
+	[																				
+		_time, //Time needed for the progress bar to complete
+		[_object,_caller,_name,_time,_ressources,_cost,_sortedCrates], 	//Arguments
+		{																			
+			//Code that runs on completion
+			
 			params ["_params"];
-			_object = _params select 0;
-			_caller = _params select 1;
-			_name = _params select 2;
-			_time = _params select 3;
-			_ressources = _params select 4;
-			_cost = _params select 5;
-			_sortedCrates = _params select 6;
+			_params params ["_object","_caller","_name","_time","_ressources","_cost","_sortedCrates"];
+			
+			//Shows the object again and stops the animation.
 			
 			_object hideObjectGlobal false;
 			_caller switchMove "Stand";
 			
+			
 			{
+				//Copies the current object to be used in the findIf code block.
+				
 				_forEachItem = _x;
+				
+				//Finds the first index of the nearest Crate having the same type as the four classnames in the forEach-loop.
+				
 				_firstEntryIndex = _sortedCrates findIf {typeOf _x == _forEachItem}; 
+				
+				//Now selects the first crate that has the same type as the current classname in the forEach-loop.
+				
 				_firstEntry = (_sortedCrates select _firstEntryIndex);
+				
+				//Gets the ressource that crates has.
+				
 				_firstEntryRessource =  _firstEntry getVariable ["ER32_Fortify_Ressources",[0,0,0,0]];
+				
+				//Sets the new ressource of the crate.
+				
 				_firstEntryRessource set [_forEachIndex, (_firstEntryRessource select _forEachIndex) - (_cost select _forEachIndex)];
+				
+				//Saves the new ressource of the crate.
+				
 				_firstEntry setVariable ["ER32_Fortify_Ressources",_firstEntryRessource, true];
+				
 			}forEach ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];		
 			
-			_ER32_ObjectDelete = [										//Ace Interaction
+			_ER32_ObjectDelete = [
 				"ER32_ObjectDelete",
 				"Remove",
 				"",
-				{														//On activation
+				{														
+					//On activation
+					
 					params ["_target","_player","_params"];
-					_time = _params select 0;
-					_name = _params select 1;
-					_sortedCrates = _params select 2;
-					_cost = _params select 3;
+					_params params ["_time","_name","_sortedCrates","_cost"];
+					
+					//Play animation
 					
 					_player playMove "Acts_carFixingWheel";
-					[															//Progress bar
-						_time/2,
+					
+					//Progress bar
+					
+					[															
+						_time/2, //Time needed
 						[_target,_player,_sortedCrates,_cost],
-						{														//On completion
+						{														
+							//On completion
+							
 							params ["_params"];
-							_target = _params select 0;
-							_player = _params select 1;
-							_sortedCrates = _params select 2;
-							_cost = _params select 3;
+							_params params ["_target","_player","_sortedCrates","_cost"];
+							
+							//Deletes the object again and removes animation.
 							
 							deleteVehicle _target;
 							hint "Deconstruction completed.";
 							_player switchMove "Stand";
 							
 							{
+								//Copies the current object to be used in the findIf code block.
+								
 								_forEachItem = _x;
+								
+								//Finds the first index of the nearest Crate having the same type as the four classnames in the forEach-loop.
+								
 								_firstEntryIndex = _sortedCrates findIf {typeOf _x == _forEachItem}; 
+								
+								//Now selects the first crate that has the same type as the current classname in the forEach-loop.
+								
 								_firstEntry = (_sortedCrates select _firstEntryIndex);
+								
+								//Gets the ressource that crates has.
+								
 								_firstEntryRessource =  _firstEntry getVariable ["ER32_Fortify_Ressources",[0,0,0,0]];
+								
+								//Sets the new ressource of the crate.
+								
 								_firstEntryRessource set [_forEachIndex, (_firstEntryRessource select _forEachIndex) + (_cost select _forEachIndex)/2];
+								
+								//Saves the new ressource of the crate.
+								
 								_firstEntry setVariable ["ER32_Fortify_Ressources",_firstEntryRessource, true];
+								
 							}forEach ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];	
 						},
-						{														//On failure
+						{														
+							//On failure
 							params ["_params"];
+							
 							_player = _params select 1;
 							hint "Deconstruction cancelled.";
 							_player switchMove "Stand";
@@ -177,13 +272,13 @@ if (_placed == true) then {
 				[_time,_name,_sortedCrates,_cost]	//Arguments
 				] call ace_interact_menu_fnc_createAction;
 			[_object, 0, ["ACE_MainActions"], _ER32_ObjectDelete] call ace_interact_menu_fnc_addActionToObject;
-		}, 												//Code on Finished
+		}, 												
 		{
+			//Code on Failure
 			params ["_params"];
+			
 			(_params select 1) switchMove "Stand"
-		}, 												//Code on Failure
-		_name + " is being build."						//Shown Text on progress bar
+		}, 												
+		_name + " is being build."	//Shown Text on progress bar
 	] call ace_common_fnc_progressBar;
 };
-
-
