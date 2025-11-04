@@ -16,7 +16,7 @@ Performance is tested by the following code:
 
 The following table shows the performance tested on the different script parts.
 
-**Performance shown in ms.**
+**Time shown in ms.**
 
 | ER32_CrateSpawner.sqf  | Spawn Crate Action | ER32_addActions.sqf |
 | ---------------------  | ------------------ | ------------------- |
