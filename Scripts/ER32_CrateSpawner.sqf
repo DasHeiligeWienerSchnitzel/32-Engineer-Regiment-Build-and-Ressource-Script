@@ -1,8 +1,4 @@
-/*
-This code spawns the four different kinds of ressource crates.
-
-Can be made more compact later.
-*/
+//This code spawns the four different kinds of ressource crates.
 
 _spawner = [ER32_fortify_spawn_crates];
 _spawnpoints = [ER32_fortify_spawn_crates_pos];
@@ -20,9 +16,8 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 			{
 				params ["_target", "_caller", "_actionID", "_arguments"];
 				
-				/*
-				Checks if a box is already inside the spawn area, otherwise will spawn the crate
-				*/
+				
+				//Checks if a box is already inside the spawn area, otherwise will spawn the crate
 				
 				_nearbyCrates = (_spawnpoints select _i) nearEntities [_crates,2];
 				if (count _nearbyCrates == 0) then {
@@ -33,13 +28,17 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 						};
 					};
 					
+					//Spawn the crate and add it's ressource.
+					
 					_crate = createVehicle [_crates select _j, getPos (_spawnpoints select _i), [], 0, "CAN_COLLIDE"]; 
 					_crate setVariable ["ER32_Fortify_Ressources", _ressource, true];
 					
-					[_crate, -1] call ace_cargo_fnc_setSize; //Removes ace interaction
-					[_crate, -1] call ace_cargo_fnc_setSpace; //Removes ace interaction
-					[_ressource,_crate] call ER32_fnc_checkForRessources; //Creates new ace interaction
-					[_crate] call ER32_fnc_loadOnFlatbed; //Creates new ace interaction
+					//Removes and adds ace interactions.
+					
+					[_crate, -1] call ace_cargo_fnc_setSize;
+					[_crate, -1] call ace_cargo_fnc_setSpace;
+					[_ressource,_crate] call ER32_fnc_checkForRessources;
+					[_crate] call ER32_fnc_loadOnFlatbed;
 				};
 			},
 			nil,		// arguments
