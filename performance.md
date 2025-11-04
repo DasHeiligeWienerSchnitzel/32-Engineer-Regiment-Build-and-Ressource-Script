@@ -1,23 +1,21 @@
 Performance is tested by the following code:
 
-private _start = diag_tickTime;
+```
+  private _start = diag_tickTime;
+  
+  ... Code ...
+  
+  private _end = diag_tickTime;
+  private _time = ((_end - _start) * 1000) - 1000;
+  waitUntil { !isNull player && alive player };
+  sleep 1;
+  hint format ["Code runned for %1 ms", _time];
+  copyToClipboard (str _time);
 
-... Code ...
-
-private _end = diag_tickTime;
-private _time = ((_end - _start) * 1000) - 1000;
-waitUntil { !isNull player && alive player };
-sleep 1;
-hint format ["Code runned for %1 ms", _time];
-copyToClipboard (str _time);
+```
 
 The following table shows the performance tested on the different script parts.
 Performance shown in ms.
-
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
 
 | ER32_CrateSpawner.sqf  | Spawn Crate Action | ER32_addActions.sqf |
 | ---------------------  | ------------------ | ------------------- |
@@ -27,9 +25,9 @@ Performance shown in ms.
 | 1.038                  | 0.977              | 50.049              |
 | 0.977                  | 0.977              | 51.025              |
 | 1.038                  | 1.099              | 57.007              |
-|---------------------   | 0.977              | 61.035              |
-| Average: 1.012         | 0.977              | 166.016             |
-                         | 0.977              | 53.955              |
-                         |----                | 57.007              |
-                         | Average: 3.886     | ---                 |
-                                              | Average: 64.502     |
+|  **Average: 1.012**    | 0.977              | 61.035              |
+|                        | 0.977              | 166.016             |
+|                        | 0.977              | 53.955              |
+|                        | **Average: 3.886** | 57.007              |
+|                        |                    | **Average: 64.502** |
+
