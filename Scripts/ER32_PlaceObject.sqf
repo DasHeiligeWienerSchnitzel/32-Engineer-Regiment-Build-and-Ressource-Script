@@ -17,33 +17,34 @@ If enough the building will be build, otherwise the construction will not happen
 If successfull the ressources needed to build will be removed from the crates. 
 */
 
-_cratesNearby = _caller nearEntities [["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"],50]; //checks all crates nearby and puts them in an array.
-_sortedCrates = [_cratesNearby, [_caller], {_input0 distance _x}, "ASCEND"] call BIS_fnc_sortBy;
-_numberOfCratesNearby = count _cratesNearby; //counts the objects in the array.
+private _cratesNearby = _caller nearEntities [["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"],50]; //checks all crates nearby and puts them in an array.
+private _sortedCrates = [_cratesNearby, [_caller], {_input0 distance _x}, "ASCEND"] call BIS_fnc_sortBy;
+private _numberOfCratesNearby = count _cratesNearby; //counts the objects in the array.
 
 /*
 If atleast one crate exists, collects all the ressources and combines them in one array.
 */
 
-_ressources = [0,0,0,0];
-_enoughRessources = true;
+private _ressources = [0,0,0,0];
+private _enoughRessources = false;
+
 if (_numberOfCratesNearby > 0) then {
 	
 	//Collects the ressources of all crates nearby.
 	
 	{
-		_ressourcesToAdd = _x getVariable ["ER32_Fortify_Ressources", [0,0,0,0]];
+		private _ressourcesToAdd = _x getVariable ["ER32_Fortify_Ressources", [0,0,0,0]];
 		for "_i" from 0 to ((count _ressources) - 1) do {
 			_ressources set [_i, (_ressources select _i) + (_ressourcesToAdd select _i)];
 		};
-		
 	}forEach _cratesNearby;
 	
 	//Now checks if the ressources are enough to cover the cost of the building.
 	
+	_enoughRessources = true;
 	for "_i" from 0 to ((count _ressources) - 1) do {
 		if ((_ressources select _i) < (_cost select _i)) then {
-			_enoughRessources = false
+			_enoughRessources = false;
 		};
 	};
 };
@@ -153,6 +154,10 @@ while {(_placed == false) and (_canceled == false)} do {
 After 'placing' the object. It will first vanish/hide and a progress bar will be shown.
 Showing the duration till the object will be sucessfully build. 
 */
+
+if (_canceled == true) exitWith {
+	hint "Placement canceled.";
+};
 
 _caller playMove "Acts_carFixingWheel";
 if (_placed == true) then {
