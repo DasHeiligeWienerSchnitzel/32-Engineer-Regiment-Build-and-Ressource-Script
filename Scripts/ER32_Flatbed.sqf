@@ -87,7 +87,7 @@ if (_object distance _nearestFlatbed < 15) then {
 							
 							//Adds back the interaction to load it back onto the flatbed.
 							
-							[_lastObject] call ER32_fnc_loadOnFlatbed;
+							[_lastObject,_crates] call ER32_fnc_loadOnFlatbed;
 							
 							//Deletes the now unloaded object from the object list.
 							
@@ -121,3 +121,4 @@ if (_object distance _nearestFlatbed < 15) then {
 		default {hint "Flatbed already full!"};
 	};
 }else{hint "No viable vehicle nearby!"};
+
