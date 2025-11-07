@@ -3,6 +3,11 @@ Contains all the functions that are used.
 */
 
 ER32_fnc_checkForRessources = {
+
+	/*
+	Creates an ace interaction point to check for ressources inside the crate.
+	*/
+	
 	params ["_ressource","_crate"];
 	
 	_ER32_ressources = [
@@ -11,7 +16,7 @@ ER32_fnc_checkForRessources = {
 		"",
 		{
 			params ["_target","_player","_params"];
-			_ressource = _params select 0;
+			private _ressource = _params select 0;
 			hint format [
 				"Ressources inside:\nConcrete: %1\nWood: %2\nSand: %3\nMetall: %4",
 				_ressource select 0,
@@ -28,7 +33,13 @@ ER32_fnc_checkForRessources = {
 };
 
 ER32_fnc_loadOnFlatbed = {
-	params ["_crate"];
+
+	/*
+	Creates an ace interaction point to put the crates onto the flatbed. 
+	More info the the "ER32_Flatbed.sqf".
+	*/
+	
+	params ["_crate","_crates"];
 	
 	_ER32_loadOnFlatbed = [
 		"ER32_LoadOnFlatbed",
@@ -36,9 +47,12 @@ ER32_fnc_loadOnFlatbed = {
 		"",
 		{
 			params ["_target","_player","_params"];
-			[_target] execVM "ER32_Flatbed.sqf"
+			_crates = _params select 0;
+			[_target,_crates] execVM "ER32_Flatbed.sqf";
 		},
-		{true}
+		{true},
+		{},
+		[_crates]
 	] call ace_interact_menu_fnc_createAction;
 	[_crate, 0, ["ACE_MainActions"], _ER32_loadOnFlatbed] call ace_interact_menu_fnc_addActionToObject;
 };
