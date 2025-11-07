@@ -16,6 +16,7 @@
 * Pressing right mouse button would not correctly end placement.
 * Arguments were missing, breaking the whole "crateSpawner.sqf" script. Fixed it by adding the arguments back.
 * Used "if () do {}" ... that of course does not work. Changed to "if () then {}" which will work. :)
+* Fixed missing argument when trying to load an unloaded create back onto a flatbed.
 
 ###### Changed
 
@@ -74,4 +75,5 @@
 ###### Removed
 
 * 
+
 
