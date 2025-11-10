@@ -1,11 +1,3 @@
-/*
-This script adds the new ace interaction points that enables the player to build pre determined structures 
-through the Classnames List. Found in the ER32_Classnames.sqf file.
-*/
-
-execVM "ER32_Classnames.sqf"; //Initialises all the classnames that will be used in the Interaction Menu.
-sleep 2;
-
 //Creates first interaction point.
 
 _ER32_MainCategory = ["ER32_BuildCategory","Build","",{true},{"ACE_Fortify" in (items player)}] call ace_interact_menu_fnc_createAction;
@@ -97,3 +89,4 @@ Creates an interaction point for each element in the corresponding list.
 		_newCategory
 	] call ace_interact_menu_fnc_addActionToObject;
 } forEach ER32_Classname_List;
+
