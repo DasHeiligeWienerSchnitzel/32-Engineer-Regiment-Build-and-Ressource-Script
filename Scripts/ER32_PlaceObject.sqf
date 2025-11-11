@@ -171,10 +171,10 @@ if (_placed == true) then {
 			
 			_object hideObjectGlobal false;
 			_caller switchMove "Stand";
+			_addOrRemove = "remove";
+			[_sortedCrates,_cost,_addOrRemove] remoteExecCall ["ER32_fnc_updateRessources",2];
 			
-			[_sortedCrates,_cost] remoteExecCall ["ER32_fnc_updateRessources",2];
-			
-			[_time,_name,_sortedCrates,_cost] remoteExecCall ["ER32_fnc_deleteObject",0,true];
+			[_object,_time,_name,_sortedCrates,_cost] remoteExecCall ["ER32_fnc_deleteObject",0,true];
 		}, 												
 		{
 			//Code on Failure
