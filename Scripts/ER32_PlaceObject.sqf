@@ -91,7 +91,7 @@ _canceled = false;
 This loop will constantly update the position and rotation of the created object.
 And check if any of the 4 combination, explained above, are fullfilled.
 */
-
+private _loopTimeStart = diag_tickTime;
 while {(_placed == false) and (_canceled == false)} do {
 	
 	//Get a relative position infront of the caller.
@@ -130,9 +130,7 @@ while {(_placed == false) and (_canceled == false)} do {
 	_pos set [2,(_pos select 2) + _posAdd];
 	_object setPos _pos;
 	_object setDir ((getDir _caller) + _dirAdd);
-	
 	sleep 0.001;
-	
 	/*
 	Checks if the left/right mouse button has been pressed.
 	On left mouse button press the object will be placed.
@@ -149,7 +147,6 @@ while {(_placed == false) and (_canceled == false)} do {
 		};
 	};
 };
-
 /*
 After 'placing' the object. It will first vanish/hide and a progress bar will be shown.
 Showing the duration till the object will be sucessfully build. 
@@ -175,108 +172,9 @@ if (_placed == true) then {
 			_object hideObjectGlobal false;
 			_caller switchMove "Stand";
 			
+			[_sortedCrates,_cost] remoteExecCall ["ER32_fnc_updateRessources",2];
 			
-			{
-				//Copies the current object to be used in the findIf code block.
-				
-				_forEachItem = _x;
-				
-				//Finds the first index of the nearest Crate having the same type as the four classnames in the forEach-loop.
-				
-				_firstEntryIndex = _sortedCrates findIf {typeOf _x == _forEachItem}; 
-				
-				//Now selects the first crate that has the same type as the current classname in the forEach-loop.
-				
-				_firstEntry = (_sortedCrates select _firstEntryIndex);
-				
-				//Gets the ressource that crates has.
-				
-				_firstEntryRessource =  _firstEntry getVariable ["ER32_Fortify_Ressources",[0,0,0,0]];
-				
-				//Sets the new ressource of the crate.
-				
-				_firstEntryRessource set [_forEachIndex, (_firstEntryRessource select _forEachIndex) - (_cost select _forEachIndex)];
-				
-				//Saves the new ressource of the crate.
-				
-				_firstEntry setVariable ["ER32_Fortify_Ressources",_firstEntryRessource, true];
-				
-			}forEach ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];		
-			
-			_ER32_ObjectDelete = [
-				"ER32_ObjectDelete",
-				"Remove",
-				"",
-				{														
-					//On activation
-					
-					params ["_target","_player","_params"];
-					_params params ["_time","_name","_sortedCrates","_cost"];
-					
-					//Play animation
-					
-					_player playMove "Acts_carFixingWheel";
-					
-					//Progress bar
-					
-					[															
-						_time/2, //Time needed
-						[_target,_player,_sortedCrates,_cost],
-						{														
-							//On completion
-							
-							params ["_params"];
-							_params params ["_target","_player","_sortedCrates","_cost"];
-							
-							//Deletes the object again and removes animation.
-							
-							deleteVehicle _target;
-							hint "Deconstruction completed.";
-							_player switchMove "Stand";
-							
-							{
-								//Copies the current object to be used in the findIf code block.
-								
-								_forEachItem = _x;
-								
-								//Finds the first index of the nearest Crate having the same type as the four classnames in the forEach-loop.
-								
-								_firstEntryIndex = _sortedCrates findIf {typeOf _x == _forEachItem}; 
-								
-								//Now selects the first crate that has the same type as the current classname in the forEach-loop.
-								
-								_firstEntry = (_sortedCrates select _firstEntryIndex);
-								
-								//Gets the ressource that crates has.
-								
-								_firstEntryRessource =  _firstEntry getVariable ["ER32_Fortify_Ressources",[0,0,0,0]];
-								
-								//Sets the new ressource of the crate.
-								
-								_firstEntryRessource set [_forEachIndex, (_firstEntryRessource select _forEachIndex) + (_cost select _forEachIndex)/2];
-								
-								//Saves the new ressource of the crate.
-								
-								_firstEntry setVariable ["ER32_Fortify_Ressources",_firstEntryRessource, true];
-								
-							}forEach ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];	
-						},
-						{														
-							//On failure
-							params ["_params"];
-							
-							_player = _params select 1;
-							hint "Deconstruction cancelled.";
-							_player switchMove "Stand";
-						},
-						_name + " is being destructed."
-					] call ace_common_fnc_progressBar;
-				},
-				{true},
-				{},
-				[_time,_name,_sortedCrates,_cost]	//Arguments
-				] call ace_interact_menu_fnc_createAction;
-			[_object, 0, ["ACE_MainActions"], _ER32_ObjectDelete] call ace_interact_menu_fnc_addActionToObject;
+			[_time,_name,_sortedCrates,_cost] remoteExecCall ["ER32_fnc_deleteObject",0,true];
 		}, 												
 		{
 			//Code on Failure
