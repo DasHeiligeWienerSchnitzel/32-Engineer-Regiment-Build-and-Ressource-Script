@@ -1,4 +1,16 @@
 #### Changelog
+---
+
+##### Version 1.3 - 11.11.2025
+The Multiplayer Compatibility Update.
+
+###### Added
+- New "ER32_addActions.sqf" file that now, instead of previously in "initPlayerLocal.sqf", manages the Actions.
+- Multiplayer Compatibility. Means ressources and interactions can now properly be used in a multiplayer environment.
+
+###### Changed
+- "initPlayerLocal.sqf" now only redirects to other scripts, instead of holding code in itself.
+- "init.sqf" --> "initServer.sqf" as only the server needs to run the code inside. 
 
 ---
 
@@ -75,5 +87,6 @@
 ###### Removed
 
 * 
+
 
 
