@@ -6,5 +6,3 @@ waitUntil {scriptDone _ER32_Classnames_scriptHandler};
 if (isServer) then {
   execVM "ER32_CrateSpawner.sqf";
 };
-
-
