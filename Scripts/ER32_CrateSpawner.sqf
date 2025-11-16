@@ -31,6 +31,7 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 					//Spawn the crate and add it's ressource.
 					
 					private _crate = createVehicle [_crates select _j, getPos (_spawnpoints select _i), [], 0, "CAN_COLLIDE"]; 
+					_crate setDir getDir (_spawnpoints select _i);
 					_crate setVariable ["ER32_Fortify_Ressources", _ressource, true];
 					
 					//Removes and adds ace interactions.
