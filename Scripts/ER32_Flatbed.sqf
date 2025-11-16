@@ -16,9 +16,9 @@ _distance_sand = _object distance _nearestFlatbed_sand;
 
 _nearestFlatbed = objNull;
 if (_distance_green > _distance_sand) then {
-	_nearestFlatbed = _distance_sand
+	_nearestFlatbed = _nearestFlatbed_sand
 }else{
-	_nearestFlatbed = _distance_green
+	_nearestFlatbed = _nearestFlatbed_green
 };
 
 /*
@@ -74,6 +74,5 @@ if (_object distance _nearestFlatbed < 15) then {
 		default {hint "Flatbed already full!"};
 	};
 }else{hint "No viable vehicle nearby!"};
-
 
 
