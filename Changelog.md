@@ -1,5 +1,28 @@
 #### Changelog
 ---
+##### Versionm 1.31 - 16.11.2025
+MP Fixes
+
+###### Added
+- Support for the sand variant of the flatbed.
+
+###### Changed
+- Increased Detection Range for spawning and unloading Crates.
+- Increased distance of object preview.
+
+###### Fixed
+- Detection for spawning and unloading crates now also includes players and other objects (like vehicles).
+- Action for loading after unloading was missing.
+- Pressing Escape while on progress bar now no longer instantly places the object down.
+
+###### Known Issues
+- Sandbags will not be properly shown for other players (All other objects work properly).
+
+###### Future Goals
+- Skip full trucks for loading cargo.
+- Add limit on height change for objects.
+
+---
 
 ##### Version 1.3 - 11.11.2025
 The Multiplayer Compatibility Update.
@@ -87,6 +110,7 @@ The Multiplayer Compatibility Update.
 ###### Removed
 
 * 
+
 
 
 
