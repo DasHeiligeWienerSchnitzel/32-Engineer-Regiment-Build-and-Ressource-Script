@@ -72,7 +72,8 @@ if (_enoughRessources == false) exitWith {
 
 //Gets the relative position of the soon to be created object to the player.
 
-_pos = [position _caller, 2.25, getDir _caller] call BIS_fnc_relPos; 
+_distance = 3;
+_pos = [position _caller, _distance, getDir _caller] call BIS_fnc_relPos; 
 
 //Creates the object at the relativ position from the player.
 
@@ -96,7 +97,7 @@ while {(_placed == false) and (_canceled == false)} do {
 	
 	//Get a relative position infront of the caller.
 	
-	_pos = [position _caller, 2.25, getDir _caller] call BIS_fnc_relPos;
+	_pos = [position _caller, _distance, getDir _caller] call BIS_fnc_relPos;
 	
 	/*
 	Depending on the key input the preview object height or rotation will be changed.
@@ -179,8 +180,11 @@ if (_placed == true) then {
 		{
 			//Code on Failure
 			params ["_params"];
+			_params params ["_object","_caller","_name","_time","_ressources","_cost","_sortedCrates"];
 			
-			(_params select 1) switchMove "Stand"
+			_caller switchMove "Stand";
+			deleteVehicle _object;
+			
 		}, 												
 		_name + " is being build."	//Shown Text on progress bar
 	] call ace_common_fnc_progressBar;
