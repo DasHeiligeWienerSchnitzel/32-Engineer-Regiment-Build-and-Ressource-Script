@@ -1,7 +1,7 @@
 //This code spawns the four different kinds of ressource crates.
 
-private _spawner = [ER32_fortify_spawn_crates,ER32_fortify_spawn_crates_1];
-private _spawnpoints = [ER32_fortify_spawn_crates_pos,ER32_fortify_spawn_crates_pos_1];
+private _spawner = [ER32_fortify_spawn_crates];
+private _spawnpoints = [ER32_fortify_spawn_crates_pos];
 private _names = ["Concrete","Wood","Sand","Metal"];
 private _ressources = [500,500,500,500];
 private _crates = ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];
@@ -18,7 +18,8 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 				
 				//Checks if a box is already inside the spawn area, otherwise will spawn the crate
 				
-				private _nearbyCrates = (_spawnpoints select _i) nearEntities [_crates,2];
+				private _nearbyCrates = (_spawnpoints select _i) nearEntities 2.5;
+				
 				if (count _nearbyCrates == 0) then {
 					private _ressource = +_ressources;
 					for "_k" from 0 to 3 do {
@@ -30,14 +31,16 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 					//Spawn the crate and add it's ressource.
 					
 					private _crate = createVehicle [_crates select _j, getPos (_spawnpoints select _i), [], 0, "CAN_COLLIDE"]; 
+					_crate setDir getDir (_spawnpoints select _i);
 					_crate setVariable ["ER32_Fortify_Ressources", _ressource, true];
 					
 					//Removes and adds ace interactions.
 					
-					[_crate, -1] call ace_cargo_fnc_setSize;
-					[_crate, -1] call ace_cargo_fnc_setSpace;
-					[_ressource,_crate] call ER32_fnc_checkForRessources;
-					[_crate,_crates] call ER32_fnc_loadOnFlatbed;
+					[_crate, -1] remoteExecCall ["ace_cargo_fnc_setSize",0,true];
+					[_crate, -1] remoteExecCall ["ace_cargo_fnc_setSpace",0,true];
+					[_crate] remoteExecCall ["ER32_fnc_checkForRessources",0,true];
+					[_crate,_crates] remoteExecCall ["ER32_fnc_loadOnFlatbed",0,true];
+					
 				}else{
 					hint "Space occupied!";
 				};
