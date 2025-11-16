@@ -8,7 +8,18 @@ The positions for the crates are dependent on the used flatbed.
 If you want to use another vehicle, you first need to find suitable positions points for your crates.
 */
 
-_nearestFlatbed = nearestObject [_object,"UK3CB_BAF_MAN_HX58_Cargo_Green_A","UK3CB_BAF_MAN_HX58_Cargo_Sand_A"]; 
+_nearestFlatbed_green = nearestObject [_object,"UK3CB_BAF_MAN_HX58_Cargo_Green_A"]; 
+_nearestFlatbed_sand = nearestObject [_object,"UK3CB_BAF_MAN_HX58_Cargo_Sand_A"]; 
+
+_distance_green = _object distance _nearestFlatbed_green;
+_distance_sand = _object distance _nearestFlatbed_sand;
+
+_nearestFlatbed = objNull;
+if (_distance_green > _distance_sand) then {
+	_nearestFlatbed = _distance_sand
+}else{
+	_nearestFlatbed = _distance_green
+};
 
 /*
 Gets the array of all the objects that are already loaded onto the flatbed.
@@ -63,5 +74,6 @@ if (_object distance _nearestFlatbed < 15) then {
 		default {hint "Flatbed already full!"};
 	};
 }else{hint "No viable vehicle nearby!"};
+
 
 
