@@ -18,7 +18,8 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 				
 				//Checks if a box is already inside the spawn area, otherwise will spawn the crate
 				
-				private _nearbyCrates = (_spawnpoints select _i) nearEntities [_crates,2];
+				private _nearbyCrates = (_spawnpoints select _i) nearEntities 2.5;
+				
 				if (count _nearbyCrates == 0) then {
 					private _ressource = +_ressources;
 					for "_k" from 0 to 3 do {
