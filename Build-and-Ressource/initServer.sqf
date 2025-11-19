@@ -1,1 +1,2 @@
-execVM "ER32_Classnames.sqf";
+execVM "Scripts/ER32_Classnames.sqf";
+
