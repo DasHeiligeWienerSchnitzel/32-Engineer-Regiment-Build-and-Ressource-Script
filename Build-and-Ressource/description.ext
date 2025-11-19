@@ -1,7 +1,7 @@
 class CfgFunctions {
 	class ER32 {
 		class BuildAndRessources {
-			file = "functions"; //folder
+			file = "Scripts/functions"; //folder
 			
 			class checkForRessources {};
 			class deleteObject {};
