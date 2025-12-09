@@ -32,6 +32,9 @@ _ER32_buildAndRessources_objectDelete = [
 				_player switchMove "Stand";
 				_addOrRemove = "add";
 				[_sortedCrates,_cost,_addOrRemove,_crates] remoteExecCall ["ER32_fnc_buildAndRessources_updateRessources",2];
+				if (!isNil "ER32_fnc_persistency_removeObject") then {
+					[_target] remoteExecCall ["ER32_fnc_persistency_removeObject",2];
+				};
 			},
 			{														
 				//On failure
