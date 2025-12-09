@@ -97,7 +97,7 @@ Creates an interaction point for each element in the corresponding list.
 		{
 			params ["_target","_player","_params"];
 			_params params ["_class","_ressources","_name","_time","_crates","_names","_maxHeight","_minHeight"];
-			[_class,_ressources,_name,_time,_player,_crates,_names,_maxHeight,_minHeight] execVM "Scripts\ER32_buildAndRessources_placeObject.sqf"
+			[_class,_ressources,_name,_time,_player,_crates,_names,_maxHeight,_minHeight] remoteExec ["ER32_fnc_buildAndRessources_placeObject",_player];
 		},
 		{true},
 		{},
