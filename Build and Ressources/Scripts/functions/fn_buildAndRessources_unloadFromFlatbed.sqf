@@ -49,6 +49,10 @@ _ER32_buildAndRessources_flatbedUnload = [
 				
 				_lastObject enableSimulationGlobal true;
 				
+				if (!isNil "ER32_fnc_persistency_removeObject") then {
+					[_lastObject] remoteExecCall ["ER32_fnc_persistency_saveObject",2];
+				};
+				
 				//If now no longer any crates are on the flatbed the interaction to unload crates will be removed.
 				
 				if (count _objectsLoaded == 0) then {
