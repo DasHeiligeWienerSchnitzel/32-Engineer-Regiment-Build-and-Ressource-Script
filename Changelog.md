@@ -25,6 +25,22 @@
 - Stacking objects in preview is no longer possible, instead it will overwrite your last input.
 
 ---
+##### Version 1.32 - 28.11.2025
+###### Changed
+- Changed classnames file to config file.
+
+###### Added
+- Added more configurables to config file.
+- Minimal and Maximum Height for Objects.
+- Load Distance and Max/Min Height can be changed in config now.
+- Dynamic Range for objects, depending on the size of the spawned object.
+
+###### Fixed
+- Building inside a vehicle is no longer possible.
+- You can no longer climb a ladder on a object you want to place --> no more space flight :(
+- Stacking objects in preview is no longer possible, instead it will overwrite your last input.
+
+---
 ##### Versionm 1.31 - 16.11.2025
 MP Fixes
 
@@ -78,35 +94,15 @@ The Multiplayer Compatibility Update.
 * Used "if () do {}" ... that of course does not work. Changed to "if () then {}" which will work. :)
 * Fixed missing argument when trying to load an unloaded create back onto a flatbed.
 
-###### Changed
-
-*
-
-###### Removed
-
-* 
-
 ---
 
 ##### Version 1.1 - 01.11.2025
-
-###### Added
-
-* 
-
-###### Fixed
-
-* 
 
 ###### Changed
 
 * Changed the ER32\_CrateSpawner.sqf to now be more flexible. Instead of hard coding all the possible ressource add actions, it now loops over customisable arrays.
 * Making it more flexible and allowing to add more than one Spawner.
 * Ressource Count, name and classname, now also can be changed more easily.
-
-###### Removed
-
-* 
 
 ---
 
@@ -123,21 +119,3 @@ The Multiplayer Compatibility Update.
 * ├── ER32\_PlaceObject.sqf
 * ├── init.sqf
 * └─ initPlayeLocal.sqf
-
-###### Fixed
-
-* 
-
-###### Changed
-
-* 
-
-###### Removed
-
-* 
-
-
-
-
-
-
