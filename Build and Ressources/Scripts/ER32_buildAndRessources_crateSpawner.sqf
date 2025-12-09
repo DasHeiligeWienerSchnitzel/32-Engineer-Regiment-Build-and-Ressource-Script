@@ -30,6 +30,10 @@ for "_i" from 0 to ((count _spawner) - 1) do {
 					_crate setDir getDir (_spawnpoints select _i);
 					_crate setVariable ["ER32_buildAndRessources_ressources", _ressource, true];
 					
+					if (!isNil "ER32_fnc_persistency_saveObject") then {
+						[_crate] remoteExecCall ["ER32_fnc_persistency_saveObject",2];
+					};
+					
 					//Removes and adds ace interactions.
 					
 					[_crate, -1] remoteExecCall ["ace_cargo_fnc_setSize",0,true];
