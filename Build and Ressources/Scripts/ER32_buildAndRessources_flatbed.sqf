@@ -61,8 +61,6 @@ if (_object distance _nearestFlatbed < _loadDistance) then {
 			
 			[_nearestFlatbed,_crates,_loadDistance] remoteExecCall ["ER32_fnc_buildAndRessources_unloadFromFlatbed",0,true];
 			
-			
-			
 		};
 		case 1: {
 			_objectsLoaded pushBack _object;
@@ -74,5 +72,3 @@ if (_object distance _nearestFlatbed < _loadDistance) then {
 		default {hint "Flatbed already full!"};
 	};
 }else{hint "No viable vehicle nearby!"};
-
-
