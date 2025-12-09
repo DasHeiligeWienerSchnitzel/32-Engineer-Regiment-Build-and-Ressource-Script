@@ -1,22 +1,70 @@
+params ["_nearestFlatbed","_crates","_loadDistance"];
+
 /*
-Creates an ace interaction point to put the crates onto the flatbed. 
-More info the the "ER32_Flatbed.sqf".
+Only if the first object is loaded onto the flatbed the interaction to unload crates will be added onto the flatbed.
+Will be later removed if no more crates are on the flatbed.
 */
-
-params ["_crate","_crates","_loadDistance"];
-
-_ER32_buildAndRessources_loadOnFlatbed = [
-	"ER32_buildAndRessources_loadOnFlatbed",
-	"Load on Flatbed",
+		
+_ER32_buildAndRessources_flatbedUnload = [
+	"ER32_buildAndRessources_flatbedUnload",
+	"Unload Crate",
 	"",
 	{
 		params ["_target","_player","_params"];
-		_crates = _params select 0;
-		_loadDistance = _params select 1;
-		[_target,_crates,_loadDistance] execVM "Scripts\ER32_buildAndRessources_flatbed.sqf";
+		_nearestFlatbed = _params select 0;
+		_crates = _params select 1;
+		_loadDistance = _params select 2;
+		
+		//Gets all the objects loaded onto the flatbed.
+		
+		_objectsLoaded = _nearestFlatbed getVariable ["ER32_buildAndRessources_objectsLoaded",[]];
+		
+		if (count _objectsLoaded > 0) then {
+			
+			private _pos = [position _nearestFlatbed, 4, (getDir _nearestFlatbed) - 180] call BIS_fnc_relPos;
+			
+			
+			private _nearbyCrates = _pos nearEntities 2.5;
+			if (count _nearbyCrates == 0) then {
+			
+				//Gets the last added object and detaches it from the flatbed.
+				
+				_lastObject = _objectsLoaded select -1;
+				_lastObject enableSimulationGlobal false;
+				detach _lastObject;
+				
+				//Now teleports it behind the flatbed.
+				
+				
+				_lastObject setPos [_pos select 0,_pos select 1,_pos select 2];
+				
+				//Adds back the interaction to load it back onto the flatbed.
+				
+				[_lastObject,_crates,_loadDistance] remoteExecCall ["ER32_fnc_buildAndRessources_loadOnFlatbed",0,true];
+				
+				//Deletes the now unloaded object from the object list.
+				
+				_objectsLoaded deleteAt [-1]; 
+				_nearestFlatbed setVariable ["ER32_buildAndRessources_objectsLoaded", _objectsLoaded, true];
+				
+				_lastObject enableSimulationGlobal true;
+				
+				if (!isNil "ER32_fnc_persistency_removeObject") then {
+					[_lastObject] remoteExecCall ["ER32_fnc_persistency_saveObject",2];
+				};
+				
+				//If now no longer any crates are on the flatbed the interaction to unload crates will be removed.
+				
+				if (count _objectsLoaded == 0) then {
+					[_nearestFlatbed, 0, ["ACE_MainActions","ER32_buildAndRessources_flatbedUnload"]] remoteExecCall ["ace_interact_menu_fnc_removeActionFromObject",-2,true];
+				};
+			}else{
+				hint "Unloading obstructed";
+			};
+		};
 	},
 	{true},
 	{},
-	[_crates,_loadDistance]
-] call ace_interact_menu_fnc_createAction;
-[_crate, 0, ["ACE_MainActions"], _ER32_buildAndRessources_loadOnFlatbed] call ace_interact_menu_fnc_addActionToObject;
+	[_nearestFlatbed,_crates,_loadDistance]
+	] call ace_interact_menu_fnc_createAction;
+[_nearestFlatbed, 0, ["ACE_MainActions"], _ER32_buildAndRessources_flatbedUnload] call ace_interact_menu_fnc_addActionToObject;
