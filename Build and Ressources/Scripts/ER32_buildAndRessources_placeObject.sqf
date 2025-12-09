@@ -76,7 +76,7 @@ _tempObject = createVehicle [_class, [0,0,-1000], [], 0, "CAN_COLLIDE"];
 
 _sizeOfObject = sizeOf _class;
 _distance = (_sizeOfObject) - 5;
-_distance = _distance max 1;
+_distance = _distance max 3;
 _distance = _distance min 20;
 
 deleteVehicle _tempObject;
@@ -170,6 +170,7 @@ while {(_placed == false) and (_canceled == false)} do {
 		if (inputMouse 1 == 1) then {
 			_canceled = true;
 			deleteVehicle _object;
+			_caller setVariable ["ER32_buildAndRessources_selectedObject",objNull];
 			_caller removeEventHandler ["AnimChanged",_eventHandler];
 		};
 	};
@@ -201,7 +202,7 @@ if (_placed == true) then {
 			_caller switchMove "Stand";
 			_addOrRemove = "remove";
 			[_sortedCrates,_cost,_addOrRemove,_crates] remoteExecCall ["ER32_fnc_buildAndRessources_updateRessources",2];
-			
+			_caller setVariable ["ER32_buildAndRessources_selectedObject",objNull];
 			[_object,_time,_name,_sortedCrates,_cost,_crates] remoteExecCall ["ER32_fnc_buildAndRessources_deleteObject",0,true];
 			
 			_caller removeEventHandler ["AnimChanged",_eventHandler];
@@ -214,8 +215,10 @@ if (_placed == true) then {
 			
 			_caller switchMove "Stand";
 			deleteVehicle _object;
+			_caller setVariable ["ER32_buildAndRessources_selectedObject",objNull];
 			_caller removeEventHandler ["AnimChanged",_eventHandler];
 		}, 												
 		_name + " is being build."	//Shown Text on progress bar
 	] call ace_common_fnc_progressBar;
 };
+
