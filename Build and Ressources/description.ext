@@ -1,1 +1,15 @@
-
+class CfgFunctions {
+	class ER32 {
+		class BuildAndRessources {
+			file = "Scripts\functions"; //folder
+			
+			class buildAndRessources_checkForRessources {};
+			class buildAndRessources_deleteObject {};
+			class buildAndRessources_loadOnFlatbed {};
+			class buildAndRessources_unloadFromFlatbed {};
+			class buildAndRessources_updateRessources {};
+			class buildAndRessources_placeObject {};
+			class buildAndRessources_syncRotationOnObject {};
+		};
+	};
+};
