@@ -7,7 +7,15 @@ The player now has 4 possibilities to interact with the object.
 4.	Cancel the construction by pressing 'ESC' or 'Right Mouse Button'. 
 */
 
-params ["_class","_cost","_name","_time","_caller","_crates","_names","_maxHeight","_minHeight"];
+params ["_class","_cost","_name","_time","_caller","_maxHeight","_minHeight"];
+
+_crates = ER32_buildAndRessources_crates;
+
+///////////////////
+//RESSOURCE CHECK//
+///////////////////
+
+
 
 /*
 First Checks for all eligible crates nearby.
@@ -26,6 +34,7 @@ If atleast one crate exists, collects all the ressources and combines them in on
 */
 
 private _ressources = [0,0,0,0];
+private _names = ER32_buildAndRessources_names;
 private _enoughRessources = false;
 
 if (_numberOfCratesNearby > 0) then {
@@ -70,6 +79,14 @@ if (_enoughRessources == false) exitWith {
 	];
 };
 
+
+
+////////////////
+//PREVIEW MODE//
+////////////////
+
+
+
 //Gets the relative position of the soon to be created object to the player.
 
 _tempObject = createVehicle [_class, [0,0,-1000], [], 0, "CAN_COLLIDE"];
@@ -109,8 +126,11 @@ _object setDir getDir _caller;
 
 _posAdd = 0.0; 
 _dirAdd = 0;
+_surfaceNormal = [0,0,0];
+_caller setVariable ["ER32_surfaceNormal",_surfaceNormal];
 _caller setVariable ["ER32_build_done", false];
 _caller setVariable ["ER32_build_canceled", false];
+
 
 _object attachTo [_caller, [0, _distance, _posAdd]];
 
@@ -161,6 +181,21 @@ _mouseWheelChangeHandler = (findDisplay 46) displayAddEventHandler ["MouseZChang
 	_caller setVariable ["ER32_dirAdd", _dirAdd, true];
 }];
 
+_mouseButtonDownHandler = (findDisplay 46) displayAddEventHandler ["MouseButtonDown", {
+	params ["_displayOrControl", "_button", "_xPos", "_yPos", "_shift", "_ctrl", "_alt"]; 
+	
+	_caller = _displayOrControl getVariable ["ER32_caller",objNull];
+	_object = _displayOrControl getVariable ["ER32_object",objNull];
+	
+	if (_button == 2) then {
+		_posObject = getPos _object;
+		_groundZ = getTerrainHeightASL [_posObject select 0, _posObject select 1];
+		_surfaceNormal = (surfaceNormal getPosASL _object);
+		_caller setVariable ["ER32_surfaceNormal",_surfaceNormal];
+	};
+}];
+
+(findDisplay 46) setVariable ["ER32_object", _object];
 (findDisplay 46) setVariable ["ER32_caller", _caller];
 (findDisplay 46) setVariable ["ER32_minHeight", _minHeight];
 (findDisplay 46) setVariable ["ER32_maxHeight", _maxHeight];
@@ -170,7 +205,7 @@ _mouseWheelChangeHandler = (findDisplay 46) displayAddEventHandler ["MouseZChang
 _previewHandler = [
 	{
 		params ["_args", "_pfhId"];
-		_args params ["_caller","_distance","_posAdd","_maxHeight","_minHeight","_dirAdd","_object","_eventHandler"];
+		_args params ["_caller","_distance","_posAdd","_maxHeight","_minHeight","_dirAdd","_object","_eventHandler","_surfaceNormal"];
 		
 		/*
 		Depending on the key input the preview object height or rotation will be changed.
@@ -181,24 +216,31 @@ _previewHandler = [
 		
 		_posAdd = _caller getVariable ["ER32_posAdd",0];
 		_dirAdd = _caller getVariable ["ER32_dirAdd",0];
+		_surfaceNormal = _caller getVariable ["ER32_surfaceNormal",[0,0,0]];
 		
 		_object setVariable ["ER32_directionChangeOnObject",_dirAdd, true];
-		
+		_object setVectorUp _surfaceNormal;
 		_object attachTo [_caller, [0, _distance, _posAdd]];
+		
+		_object setVectorUp _surfaceNormal;
 		
 		_args set [2, _posAdd];
 		_args set [5, _dirAdd];
-
+		_args set [8, _surfaceNormal]; 
+		
 		/*
 		Checks if the left/right mouse button has been pressed.
 		On left mouse button press the object will be placed.
 		On right mouse button press the placement will be canceled.
 		*/
 		
+		_dirTest = _object getVariable ["ER32_directionChangeOnObject",0];
 		if (inputMouse 0 == 1) then {
 			_object setVariable ["ER32_build_done", true];
+			_object setVariable ["ER32_dirAdd",getDir _object];
 			detach _object;
-			_object hideObjectGlobal true;
+			_dir = _object getVariable ["ER32_dirAdd",0];	
+			_object setDir _dir;
 		}else{
 			if (inputMouse 1 == 1) then {
 				_object setVariable ["ER32_build_canceled", true];
@@ -213,17 +255,29 @@ _previewHandler = [
 		};
 	},
 	0,
-	[_caller,_distance,_posAdd,_maxHeight,_minHeight,_dirAdd,_object,_eventHandler]
+	[_caller,_distance,_posAdd,_maxHeight,_minHeight,_dirAdd,_object,_eventHandler,_surfaceNormal]
 ] call CBA_fnc_addPerFrameHandler;
 
 waitUntil {_object getVariable ["ER32_build_done",false] or _object getVariable ["ER32_build_canceled",false]};
 
+
+
+//////////////////////////
+//PLACEMENT/CANCELLATION//
+//////////////////////////
+
+
+
 findDisplay 46 displayRemoveEventHandler ["keyDown",_keyDownHandler];
 findDisplay 46 displayRemoveEventHandler ["keyUp",_keyUpHandler];
 findDisplay 46 displayRemoveEventHandler ["MouseZChanged",_mouseWheelChangeHandler];
+findDisplay 46 displayRemoveEventHandler ["MouseButtonDown",_mouseButtonDownHandler];
 
 _placed = _object getVariable ["ER32_build_done",false];
 _canceled = _object getVariable ["ER32_build_canceled",false];
+
+_dir = _object getVariable ["ER32_dirAdd",0];	
+_object setDir _dir;
 
 /*
 After 'placing' the object. It will first vanish/hide and a progress bar will be shown.
@@ -238,28 +292,28 @@ _caller playMove "Acts_carFixingWheel";
 if (_placed == true) then {
 	[																				
 		_time, //Time needed for the progress bar to complete
-		[_object,_caller,_name,_time,_ressources,_cost,_sortedCrates,_eventHandler,_crates], 	//Arguments
+		[_object,_caller,_name,_time,_ressources,_cost,_sortedCrates,_eventHandler], 	//Arguments
 		{																			
 			//Code that runs on completion
 			
 			params ["_params"];
-			_params params ["_object","_caller","_name","_time","_ressources","_cost","_sortedCrates","_eventHandler","_crates"];
+			_params params ["_object","_caller","_name","_time","_ressources","_cost","_sortedCrates","_eventHandler"];
 			
 			//Shows the object again and stops the animation.
-			
-			_object hideObjectGlobal false;
 			_object enableSimulationGlobal true;
+			_dir = _object getVariable ["ER32_dirAdd",0];	
+			_object setDir _dir;
 			_caller switchMove "Stand";
 			_addOrRemove = "remove";
 			
-			[_sortedCrates,_cost,_addOrRemove,_crates] remoteExecCall ["ER32_fnc_buildAndRessources_updateRessources",2];
+			[_sortedCrates,_cost,_addOrRemove] remoteExecCall ["ER32_fnc_buildAndRessources_updateRessources",2];
 			_caller setVariable ["ER32_buildAndRessources_selectedObject",objNull];
 			
 			if (!isNil "ER32_fnc_persistency_saveObject") then {
-				[_object] remoteExecCall ["ER32_fnc_persistency_saveObject",2];
+				[[_object]] remoteExecCall ["ER32_fnc_persistency_saveObject",2];
 			};
 			
-			[_object,_time,_name,_sortedCrates,_cost,_crates] remoteExecCall ["ER32_fnc_buildAndRessources_deleteObject",0,true];
+			[_object,_time,_name,_sortedCrates,_cost] remoteExecCall ["ER32_fnc_buildAndRessources_deleteObject",0,true];
 			
 			_caller removeEventHandler ["AnimChanged",_eventHandler];
 			

@@ -1,4 +1,4 @@
-params ["_object","_time","_name","_sortedCrates","_cost","_crates"];
+params ["_object","_time","_name","_sortedCrates","_cost"];
 
 _ER32_buildAndRessources_objectDelete = [
 	"ER32_buildAndRessources_objectDelete",
@@ -18,12 +18,12 @@ _ER32_buildAndRessources_objectDelete = [
 		
 		[															
 			_time/2, //Time needed
-			[_target,_player,_sortedCrates,_cost,_crates],
+			[_target,_player,_sortedCrates,_cost],
 			{														
 				//On completion
 				
 				params ["_params"];
-				_params params ["_target","_player","_sortedCrates","_cost","_crates"];
+				_params params ["_target","_player","_sortedCrates","_cost"];
 				
 				//Deletes the object again and removes animation.
 				
@@ -31,7 +31,7 @@ _ER32_buildAndRessources_objectDelete = [
 				hint "Deconstruction completed.";
 				_player switchMove "Stand";
 				_addOrRemove = "add";
-				[_sortedCrates,_cost,_addOrRemove,_crates] remoteExecCall ["ER32_fnc_buildAndRessources_updateRessources",2];
+				[_sortedCrates,_cost,_addOrRemove] remoteExecCall ["ER32_fnc_buildAndRessources_updateRessources",2];
 				if (!isNil "ER32_fnc_persistency_removeObject") then {
 					[_target] remoteExecCall ["ER32_fnc_persistency_removeObject",2];
 				};

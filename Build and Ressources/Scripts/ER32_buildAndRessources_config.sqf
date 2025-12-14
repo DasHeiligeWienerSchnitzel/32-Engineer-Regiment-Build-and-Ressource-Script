@@ -67,13 +67,13 @@ You are able to change the name,ressource and crate name, number, class.
 
 private _spawner = [ER32_fortify_spawn_crates];
 private _spawnpoints = [ER32_fortify_spawn_crates_pos];
-private _names = ["Concrete","Wood","Sand","Metal"];
+ER32_buildAndRessources_names = ["Concrete","Wood","Sand","Metal"];
 private _ressources = [1000,1000,1000,1000];
-private _crates = ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];
+ER32_buildAndRessources_crates = ["Land_Cargo10_white_F","Land_Cargo10_orange_F","Land_Cargo10_sand_F","Land_Cargo10_grey_F"];
 
-private _loadDistance = 15;
+ER32_buildAndRessources_loadDistance = 15;
 
 private _maxHeight = 10;
 private _minHeight = -10;
 
-[_classname_list,_spawner,_spawnpoints,_names,_ressources,_crates,_loadDistance,_maxHeight,_minHeight] execVM "Scripts\ER32_buildAndRessources_crateSpawner.sqf";
+[_classname_list,_spawner,_spawnpoints,_ressources,_maxHeight,_minHeight] execVM "Scripts\ER32_buildAndRessources_crateSpawner.sqf";

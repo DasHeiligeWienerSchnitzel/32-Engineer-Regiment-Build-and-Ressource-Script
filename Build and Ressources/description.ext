@@ -1,6 +1,7 @@
 class CfgFunctions {
 	class ER32 {
-		class BuildAndRessources {
+		class BuildAndRessources 
+		{
 			file = "Scripts\functions"; //folder
 			
 			class buildAndRessources_checkForRessources {};

@@ -1,6 +1,6 @@
 //In this script the whole interaction with the crates and the flatbed is done.
 
-params ["_object","_crates","_loadDistance"];
+params ["_object"];
 
 /*
 Get nearest Flatbed that has the needed classname.
@@ -32,13 +32,32 @@ _objectsLoaded = _nearestFlatbed getVariable ["ER32_buildAndRessources_objectsLo
 Script will only fire if the distance between crate and flatbed is less then 15 meters.
 */
 
-if (_object distance _nearestFlatbed < _loadDistance) then {
+_tractorLoaded = _objectsLoaded findIf {typeOf _x == "UK3CB_C_Tractor"};
+
+if ((_object distance _nearestFlatbed < ER32_buildAndRessources_loadDistance) and (_tractorLoaded == -1)) then {
 	
 	/*
 	Counts how many objects are on the flatbed and depending on how many there are,
 	it will either put the crate in the first place, second place or will tell the player that
 	there is no more space onto the flatbed.
 	*/
+	
+	if (count _objectsLoaded > 0 and typeOf _object == "UK3CB_C_Tractor") exitWith {hint "Bulldozer can not be loaded.\nNo Space!"};
+	
+	if (count _objectsLoaded == 0 and typeOf _object == "UK3CB_C_Tractor") exitWith {
+		_objectsLoaded pushBack _object; 
+		_nearestFlatbed setVariable ["ER32_buildAndRessources_objectsLoaded",_objectsLoaded, true];
+		
+		_object attachTo [_nearestFlatbed, [0,3,0.6]];
+		_object setVectorDirAndUp [(vectorDir _nearestFlatbed) vectorMultiply -1,vectorUp _nearestFlatbed];
+		
+		if (isMultiplayer) then {
+			[_object, 0, ["ACE_MainActions","ER32_buildAndRessources_loadOnFlatbed"]] remoteExecCall ["ace_interact_menu_fnc_removeActionFromObject",-2,true];
+		}else{
+			[_object, 0, ["ACE_MainActions","ER32_buildAndRessources_loadOnFlatbed"]] call ace_interact_menu_fnc_removeActionFromObject;
+		};
+		[_nearestFlatbed] remoteExecCall ["ER32_fnc_buildAndRessources_unloadFromFlatbed",0,true];
+	};
 	
 	switch (count _objectsLoaded) do {
 		case 0: {
@@ -59,7 +78,7 @@ if (_object distance _nearestFlatbed < _loadDistance) then {
 			*/
 			[_object, 0, ["ACE_MainActions","ER32_buildAndRessources_loadOnFlatbed"]] remoteExecCall ["ace_interact_menu_fnc_removeActionFromObject",-2,true];
 			
-			[_nearestFlatbed,_crates,_loadDistance] remoteExecCall ["ER32_fnc_buildAndRessources_unloadFromFlatbed",0,true];
+			[_nearestFlatbed] remoteExecCall ["ER32_fnc_buildAndRessources_unloadFromFlatbed",0,true];
 			
 		};
 		case 1: {

@@ -3,7 +3,7 @@ This script adds the new ace interaction points that enables the player to build
 through the Classnames List. Found in the ER32_Classnames.sqf file.
 */
 
-params ["_classname_list","_crates","_names","_maxHeight","_minHeight"];
+params ["_classname_list","_maxHeight","_minHeight"];
 
 //Creates first interaction point.
 
@@ -45,8 +45,8 @@ _ER32_buildAndRessources_ressources = [
 	{
 		
 		params ["_target","_player","_params"];
-		_crates = _params select 0;
-		_names = _params select 1;
+		_crates = ER32_buildAndRessources_crates;
+		_names = ER32_buildAndRessources_names;
 		
 		//Gets all the valid crates in a 50 meter radius around the player.
 		
@@ -74,8 +74,7 @@ _ER32_buildAndRessources_ressources = [
 		
 	},
 	{true},
-	{},
-	[_crates,_names]
+	{}
 	] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions","ER32_buildAndRessources_buildCategory"], _ER32_buildAndRessources_ressources] call ace_interact_menu_fnc_addActionToObject;
 
@@ -86,7 +85,7 @@ Creates an interaction point for each element in the corresponding list.
 {
 	_class = _x select 0;
 	_ressources = _x select 1;
-	_name = _x select 2;
+	_name = (_x select 2) + " " + str(_ressources);
 	_category = _x select 3;
 	_time = _x select 4;
 	
@@ -96,12 +95,12 @@ Creates an interaction point for each element in the corresponding list.
 		"",
 		{
 			params ["_target","_player","_params"];
-			_params params ["_class","_ressources","_name","_time","_crates","_names","_maxHeight","_minHeight"];
-			[_class,_ressources,_name,_time,_player,_crates,_names,_maxHeight,_minHeight] remoteExec ["ER32_fnc_buildAndRessources_placeObject",_player];
+			_params params ["_class","_ressources","_name","_time","_maxHeight","_minHeight"];
+			[_class,_ressources,_name,_time,_player,_maxHeight,_minHeight] remoteExec ["ER32_fnc_buildAndRessources_placeObject",_player];
 		},
 		{true},
 		{},
-		[_class,_ressources,_name,_time,_crates,_names,_maxHeight,_minHeight]
+		[_class,_ressources,_name,_time,_maxHeight,_minHeight]
 	] call ace_interact_menu_fnc_createAction;
 		
 	[
