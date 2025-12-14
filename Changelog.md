@@ -2,6 +2,22 @@
 
 ---
 
+##### Version 1.40 - 14.12.2025
+###### Fixed
+- Rotation button detection was using a zeus button, which only worked for zeuses (which didnt show up as a problem in testing). Now rotation works with displayEventHandler, tracking the needed buttons directly.
+- Rotation was inconsistent between the three modes "preview", "building" and "placement". Now rotation will show up consistent in all phases.
+
+###### Added
+- The bulldozer from the Roadbuilder Script can now be, like the crates, be loaded onto the flatbed.
+- Flushing an object to the ground is now possible by pressing the middle mouse button while in preview mode.
+- The ressource cost, will now be shown in the name of the action. No more guessing how much something costs.
+- Synchronization of rotation in preview mode is now possible.
+
+###### Changed
+- Changed the building system to no longer use setPos, but attachTo instead.
+
+---
+
 ##### Version 1.33 - 01.12.2025
 ###### Fixed
 - Distance from player for smaller objects was too little, resulting in the object pushing the player away. Fixed by increasing the minimal distance of an object to the player from 1 to 3 meters.
@@ -118,4 +134,5 @@ The Multiplayer Compatibility Update.
 * ├── ER32\_Functions.sqf
 * ├── ER32\_PlaceObject.sqf
 * ├── init.sqf
+
 * └─ initPlayeLocal.sqf
