@@ -1,4 +1,4 @@
-params ["_sortedCrates","_cost","_addOrRemove","_crates"];
+params ["_sortedCrates","_cost","_addOrRemove"];
 
 {
 	//Copies the current object to be used in the findIf code block.
@@ -29,4 +29,4 @@ params ["_sortedCrates","_cost","_addOrRemove","_crates"];
 	
 	_firstEntry setVariable ["ER32_buildAndRessources_ressources",_firstEntryRessource, true];
 	
-}forEach _crates;
+}forEach ER32_buildAndRessources_crates;

@@ -1,4 +1,4 @@
-params ["_nearestFlatbed","_crates","_loadDistance"];
+params ["_nearestFlatbed"];
 
 /*
 Only if the first object is loaded onto the flatbed the interaction to unload crates will be added onto the flatbed.
@@ -12,8 +12,6 @@ _ER32_buildAndRessources_flatbedUnload = [
 	{
 		params ["_target","_player","_params"];
 		_nearestFlatbed = _params select 0;
-		_crates = _params select 1;
-		_loadDistance = _params select 2;
 		
 		//Gets all the objects loaded onto the flatbed.
 		
@@ -35,12 +33,15 @@ _ER32_buildAndRessources_flatbedUnload = [
 				
 				//Now teleports it behind the flatbed.
 				
-				
-				_lastObject setPos [_pos select 0,_pos select 1,_pos select 2];
+				if (typeOf _lastObject == "UK3CB_C_Tractor") then {
+					_lastObject setPos [_pos select 0,_pos select 1,(_pos select 2) + 3];
+				}else{
+					_lastObject setPos [_pos select 0,_pos select 1,_pos select 2];
+				};
 				
 				//Adds back the interaction to load it back onto the flatbed.
 				
-				[_lastObject,_crates,_loadDistance] remoteExecCall ["ER32_fnc_buildAndRessources_loadOnFlatbed",0,true];
+				[_lastObject] remoteExecCall ["ER32_fnc_buildAndRessources_loadOnFlatbed",0,true];
 				
 				//Deletes the now unloaded object from the object list.
 				
@@ -49,10 +50,18 @@ _ER32_buildAndRessources_flatbedUnload = [
 				
 				_lastObject enableSimulationGlobal true;
 				
+				if (!isNil "ER32_fnc_persistency_removeObject") then {
+					[[_lastObject]] remoteExecCall ["ER32_fnc_persistency_saveObject",2];
+				};
+				
 				//If now no longer any crates are on the flatbed the interaction to unload crates will be removed.
 				
 				if (count _objectsLoaded == 0) then {
-					[_nearestFlatbed, 0, ["ACE_MainActions","ER32_buildAndRessources_flatbedUnload"]] remoteExecCall ["ace_interact_menu_fnc_removeActionFromObject",-2,true];
+					if (isMultiplayer) then {
+						[_nearestFlatbed, 0, ["ACE_MainActions","ER32_buildAndRessources_flatbedUnload"]] remoteExecCall ["ace_interact_menu_fnc_removeActionFromObject",-2,true];
+					}else{
+						[_nearestFlatbed, 0, ["ACE_MainActions","ER32_buildAndRessources_flatbedUnload"]] call ace_interact_menu_fnc_removeActionFromObject;
+					};
 				};
 			}else{
 				hint "Unloading obstructed";
@@ -61,6 +70,6 @@ _ER32_buildAndRessources_flatbedUnload = [
 	},
 	{true},
 	{},
-	[_nearestFlatbed,_crates,_loadDistance]
+	[_nearestFlatbed]
 	] call ace_interact_menu_fnc_createAction;
 [_nearestFlatbed, 0, ["ACE_MainActions"], _ER32_buildAndRessources_flatbedUnload] call ace_interact_menu_fnc_addActionToObject;
